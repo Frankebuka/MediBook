@@ -7,7 +7,7 @@ export default defineConfig({
     proxy: {
       "/api": {
         target:
-          "https://medi-book-2-ka9lynjlg-franks-projects-530fd17a.vercel.app/",
+          "https://medi-book-2-irf2kcrlu-franks-projects-530fd17a.vercel.app",
         secure: false,
       },
     },
