@@ -6,8 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target:
-          "https://medi-book-2-irf2kcrlu-franks-projects-530fd17a.vercel.app",
+        target: "https://medibook-1.netlify.app/",
         secure: false,
       },
     },
