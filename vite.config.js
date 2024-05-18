@@ -6,7 +6,8 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:3000",
+        target:
+          "https://medi-book-2-ka9lynjlg-franks-projects-530fd17a.vercel.app/",
         secure: false,
       },
     },
