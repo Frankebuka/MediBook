@@ -1,8 +1,40 @@
+import { useEffect, useState } from "react";
+import { ChatState } from "../../context/ChatProvider";
+import PatientData from "../components/PatientData";
+
 const MedicalManager = () => {
+  const [appointments, setAppointments] = useState([]);
+  const { user } = ChatState();
   const defaultProps = {
     label: "One-Time",
-    values: ["Option 1", "Option 2", "Option 3"],
+    values: ["One-Time", "One-Week", "One-Month"],
   };
+
+  const patientInformation = async () => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      };
+
+      const response = await fetch("/api/appointment", config);
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+
+      setAppointments(data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    patientInformation();
+  }, []);
 
   return (
     <div className="min-h-screen bg-white grid grid-cols-4 space-x-1">
@@ -38,24 +70,11 @@ const MedicalManager = () => {
           <h2 className="text-black mb-6 text-lg font-semibold leading-5">
             Patient Information
           </h2>
-          <p className="text-black text-base font-normal leading-5">
-            Name: John Smith
-          </p>
-          <p className="text-black text-base font-normal leading-5">Age: 45</p>
-          <p className="text-black text-base font-normal leading-5">
-            Gender: Male
-          </p>
-          <p className="text-black text-base font-normal leading-5">
-            Contact: 123-456-7890
-          </p>
-          <p className="text-black text-base font-normal mb-6 leading-5">
-            Medical Info: Allergies - None
-          </p>
-          <button className="cursor-pointer top-70 left-82 w-32 h-10 px-2 border-0 box-border rounded-full bg-pink-600 text-white text-base font-normal leading-5 outline-none">
-            <p className="text-white text-base font-normal leading-5 text-center">
-              Select Patient
-            </p>
-          </button>
+          <div className="flex flex-row space-x-6">
+            {appointments?.map((appoint) => (
+              <PatientData key={appoint._id} appoint={appoint} />
+            ))}
+          </div>
         </div>
 
         <div className=" bg-white p-8 my-2 w-full rounded-3xl shadow-md">

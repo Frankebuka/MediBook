@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { HeartIcon } from "../components/Icons";
 
 const BookingConfirm = () => {
@@ -31,9 +32,11 @@ const BookingConfirm = () => {
             Your appointment is confirmed and saved in your profile. You will
             receive a reminder before the scheduled time.
           </p>
-          <button className="top-24 left-24 w-36 h-10 px-2 border-0 rounded-full bg-pink-600 text-white text-base font-roboto font-semibold leading-6 focus:outline-none">
-            Back home
-          </button>
+          <Link to="/">
+            <button className="top-24 left-24 w-36 h-10 px-2 border-0 rounded-full bg-pink-600 text-white text-base font-roboto font-semibold leading-6 focus:outline-none">
+              Back home
+            </button>
+          </Link>
         </div>
       </div>
     </div>

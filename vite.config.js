@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://medibook-1.netlify.app/",
+        target: "http://localhost:3000/",
         secure: false,
       },
     },

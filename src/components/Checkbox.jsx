@@ -1,5 +1,3 @@
-import React from "react";
-
 const styles = {
   Container: {
     cursor: "pointer",
@@ -12,12 +10,12 @@ const styles = {
     pointerEvents: "auto",
     color: "rgba(255, 255, 255, 1)",
     backgroundColor: "rgba(241, 5, 116, 1)",
-    borderRadius: "5px",
+    borderRadius: "50%",
     boxShadow: "0px 0px 0px rgba(0, 0, 0, 0.08)",
     border: 0,
   },
   Check: {
-    display: "none",
+    display: "block",
     transition: "left 0.3s ease",
     zIndex: 1,
   },
@@ -31,24 +29,17 @@ const styles = {
   },
 };
 
-const Checkbox = () => {
-  const [isChecked, setIsChecked] = React.useState(false);
-
-  const onClick = () => {
-    setIsChecked(!isChecked);
-  };
-
+const Checkbox = ({ isChecked, onClick }) => {
   return (
     <div style={styles.Container} onClick={onClick}>
-      <div
-        style={{
-          ...styles.Check,
-          display: isChecked ? "block" : "none",
-        }}
-      >
-        ✓
-      </div>
-      <input type="checkbox" style={styles.Input} />
+      {isChecked && <div style={styles.Check}>✓</div>}
+      <input
+        type="radio"
+        style={styles.Input}
+        required
+        readOnly
+        checked={isChecked}
+      />
     </div>
   );
 };

@@ -1,8 +1,25 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ChatState } from "../../context/ChatProvider";
 
 const DoctorAppointment = () => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [insuranceOption, setInsuranceOption] = useState(null);
+  const [file, setFile] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    dob: "",
+    nationality: "",
+  });
+
+  const { fullName, email, phone, dob, nationality } = file;
+  const navigate = useNavigate();
+  const { user } = ChatState();
+
+  const handleChange = (e) => {
+    setFile({ ...file, [e.target.name]: e.target.value });
+  };
 
   const options = [
     { id: 1, label: "Male" },
@@ -15,12 +32,46 @@ const DoctorAppointment = () => {
     { id: 2, label: "No, thank you." },
   ];
 
-  const handleOptionChange = (id) => {
-    setSelectedOption(id);
+  const handleChangeGender = (id) => {
+    const selectedGender = options.find((option) => option.id === id).label;
+    setSelectedOption(selectedGender);
   };
 
-  const handleChange = (id) => {
-    setInsuranceOption(id);
+  const handleChangeInsurance = (id) => {
+    const selectedInsurance = chooseOption.find(
+      (option) => option.id === id
+    ).label;
+    setInsuranceOption(selectedInsurance);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const dataToSend = {
+      ...file,
+      gender: selectedOption,
+      insurance: insuranceOption,
+    };
+
+    try {
+      const response = await fetch("/api/appointment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user?.token}`,
+        },
+        body: JSON.stringify(dataToSend),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      await response.json();
+      navigate("/booking-confirm", { replace: true });
+      console.log("Success:");
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (
@@ -40,15 +91,19 @@ const DoctorAppointment = () => {
         Enter your personal details
       </p>
       <div className="flex justify-center">
-        <form className="w-full  space-y-4">
+        <form onSubmit={handleSubmit} className="w-full space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
             <div>
               <label className="text-black text-lg font-bold leading-7">
                 Email Address
               </label>
               <input
-                type="text"
+                type="email"
                 placeholder="your@email"
+                name="email"
+                value={email}
+                onChange={handleChange}
+                required
                 className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
               />
             </div>
@@ -57,8 +112,12 @@ const DoctorAppointment = () => {
                 Phone Number
               </label>
               <input
-                type="text"
+                type="tel"
                 placeholder="+(XX) XX XX XX XX"
+                name="phone"
+                value={phone}
+                onChange={handleChange}
+                required
                 className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
               />
             </div>
@@ -69,6 +128,10 @@ const DoctorAppointment = () => {
               <input
                 type="text"
                 placeholder="First Last"
+                name="fullName"
+                value={fullName}
+                onChange={handleChange}
+                required
                 className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
               />
             </div>
@@ -77,8 +140,12 @@ const DoctorAppointment = () => {
                 Date of Birth
               </label>
               <input
-                type="text"
+                type="date"
                 placeholder="MM/DD/YYYY"
+                name="dob"
+                value={dob}
+                onChange={handleChange}
+                required
                 className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
               />
             </div>
@@ -89,6 +156,10 @@ const DoctorAppointment = () => {
               <input
                 type="text"
                 placeholder="Country"
+                name="nationality"
+                value={nationality}
+                onChange={handleChange}
+                required
                 className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
               />
             </div>
@@ -104,10 +175,11 @@ const DoctorAppointment = () => {
                   >
                     <input
                       type="radio"
-                      name="options"
-                      value={option.id}
-                      checked={selectedOption === option.id}
-                      onChange={() => handleOptionChange(option.id)}
+                      name="gender"
+                      value={option.label}
+                      checked={selectedOption === option.label}
+                      onChange={() => handleChangeGender(option.id)}
+                      required
                       className="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
                     />
                     <span>{option.label}</span>
@@ -133,10 +205,11 @@ const DoctorAppointment = () => {
                 >
                   <input
                     type="radio"
-                    name="options"
-                    value={option.id}
-                    checked={insuranceOption === option.id}
-                    onChange={() => handleChange(option.id)}
+                    name="insurance"
+                    value={option.label}
+                    checked={insuranceOption === option.label}
+                    required
+                    onChange={() => handleChangeInsurance(option.id)}
                     className="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
                   />
                   <span>{option.label}</span>
@@ -145,7 +218,10 @@ const DoctorAppointment = () => {
             </div>
           </div>
 
-          <button className=" bg-pink-600 text-white py-2 px-4 rounded-lg">
+          <button
+            type="submit"
+            className="bg-pink-600 text-white py-2 px-4 rounded-lg"
+          >
             Book now
           </button>
         </form>

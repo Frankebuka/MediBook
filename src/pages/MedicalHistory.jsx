@@ -1,35 +1,107 @@
+import { useEffect, useState } from "react";
+import { ChatState } from "../../context/ChatProvider";
+
 const MedicalHistory = () => {
+  const [appointments, setAppointments] = useState([]);
+  const { user, setFetchAgain, fetchAgain } = ChatState();
+  console.log(appointments);
+
+  const patientInformation = async () => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      };
+
+      const response = await fetch("/api/searchspecialist", config);
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      setAppointments(data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    patientInformation();
+  }, [fetchAgain]);
+
+  const handleDelete = async (id) => {
+    console.log();
+    try {
+      const res = await fetch(`/api/searchspecialist/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      await res.json();
+      setFetchAgain(!fetchAgain);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <div className="text-gray-900 text-2xl font-roboto font-bold leading-28 my-10">
         Appointment History
       </div>
-      <div
-        className="bg-white rounded-lg shadow-custom w-full p-6"
-        style={{
-          top: "195px",
-          left: "48px",
-          height: "191px",
-        }}
-      >
-        <p className="text-gray-900 text-sm font-roboto font-normal leading-21 mb-1">
-          Date: June 12, 2021
-        </p>
-        <p className="text-gray-900 text-sm font-roboto font-normal leading-21 mb-1">
-          Time: 10:30 AM
-        </p>
-        <p className="text-gray-900 text-sm font-roboto font-normal leading-21 mb-1">
-          Specialist: Dr. Smith
-        </p>
-        <p className="text-gray-900 text-sm font-roboto font-normal leading-21 mb-1">
-          Reason: Routine Checkup
-        </p>
-        <p className="text-gray-900 text-sm font-roboto font-normal leading-21 mb-1">
-          Notes: No specific concerns
-        </p>
-        <p className="text-gray-900 text-sm font-roboto font-normal leading-21 mb-1">
-          View Details
-        </p>
+      <div className="flex flex-col gap-3">
+        {appointments && appointments.length > 0 ? (
+          appointments.map((appoint) => {
+            return (
+              <div
+                key={appoint._id}
+                className="bg-white rounded-lg shadow-custom w-full p-6"
+                style={{
+                  top: "195px",
+                  left: "48px",
+                  height: "191px",
+                }}
+              >
+                <p className="text-gray-900 text-sm font-roboto font-normal leading-21 mb-1">
+                  Date: {appoint.date}
+                </p>
+                <p className="text-gray-900 text-sm font-roboto font-normal leading-21 mb-1">
+                  Time: {appoint.time}
+                </p>
+                <p className="text-gray-900 text-sm font-roboto font-normal leading-21 mb-1">
+                  Specialist: {appoint.specialty}
+                </p>
+                <p className="text-gray-900 text-sm font-roboto font-normal leading-21 mb-1">
+                  Reason: {appoint.reason}
+                </p>
+                <p className="text-gray-900 text-sm font-roboto font-normal mb-3 leading-21 mb-1">
+                  Notes: {appoint.note}
+                </p>
+                <div className="flex flex-row space-x-4">
+                  <p className="text-gray-900 text-sm font-roboto font-normal leading-21 mb-1 cursor-pointer hover:underline">
+                    View
+                  </p>
+                  <p
+                    onClick={() => handleDelete(appoint._id)}
+                    className="text-gray-900 text-sm font-roboto font-normal leading-21 mb-1 cursor-pointer hover:underline"
+                  >
+                    Delete
+                  </p>
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <p>No appointments found</p>
+        )}
       </div>
     </div>
   );
