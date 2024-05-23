@@ -66,9 +66,9 @@ const DoctorAppointment = () => {
         throw new Error("Network response was not ok");
       }
 
-      await response.json();
+      const data = await response.json();
       navigate("/booking-confirm", { replace: true });
-      console.log("Success:");
+      console.log("Success:", data);
     } catch (error) {
       console.error("Error:", error);
     }

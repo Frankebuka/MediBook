@@ -1,4 +1,6 @@
-const PatientData = ({ appoint }) => {
+const PatientData = ({ appoint, handleSelect, selectedAppointmentId }) => {
+  const isSelected = selectedAppointmentId === appoint._id;
+
   return (
     <div>
       <p className="text-black text-base font-normal leading-5">
@@ -19,8 +21,13 @@ const PatientData = ({ appoint }) => {
       <p className="text-black text-base font-normal mb-6 leading-5">
         Insurance: {appoint.insurance}
       </p>
-      <button className="cursor-pointer top-70 left-82 w-32 h-10 px-2 border-0 box-border rounded-full bg-pink-600 text-white text-base font-normal leading-5 outline-none">
-        <p className="text-white text-base font-normal leading-5 text-center">
+      <button
+        className={`cursor-pointer top-70 left-82 w-32 h-10 px-2 border-0 box-border rounded-full text-white text-base font-normal leading-5 outline-none ${
+          isSelected ? "bg-gray-100" : "bg-pink-600"
+        }`}
+        onClick={() => handleSelect(appoint._id)}
+      >
+        <p className="text-base font-normal leading-5 text-center">
           Select Patient
         </p>
       </button>

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ChatState } from "../../context/ChatProvider";
 
 const MedicalHistory = () => {
   const [appointments, setAppointments] = useState([]);
   const { user, setFetchAgain, fetchAgain } = ChatState();
-  console.log(appointments);
+  const navigate = useNavigate();
 
   const patientInformation = async () => {
     try {
@@ -32,7 +33,6 @@ const MedicalHistory = () => {
   }, [fetchAgain]);
 
   const handleDelete = async (id) => {
-    console.log();
     try {
       const res = await fetch(`/api/searchspecialist/${id}`, {
         method: "DELETE",
@@ -50,6 +50,10 @@ const MedicalHistory = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleView = (id) => {
+    navigate(`/appointment-details/${id}`);
   };
 
   return (
@@ -86,7 +90,10 @@ const MedicalHistory = () => {
                   Notes: {appoint.note}
                 </p>
                 <div className="flex flex-row space-x-4">
-                  <p className="text-gray-900 text-sm font-roboto font-normal leading-21 mb-1 cursor-pointer hover:underline">
+                  <p
+                    onClick={() => handleView(appoint._id)}
+                    className="text-gray-900 text-sm font-roboto font-normal leading-21 mb-1 cursor-pointer hover:underline"
+                  >
                     View
                   </p>
                   <p
@@ -100,7 +107,9 @@ const MedicalHistory = () => {
             );
           })
         ) : (
-          <p>No appointments found</p>
+          <p className="text-gray-900 text-2xl font-roboto font-bold leading-28 my-10">
+            No History
+          </p>
         )}
       </div>
     </div>

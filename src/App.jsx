@@ -13,6 +13,7 @@ import SearchDoctor from "./pages/SearchDoctor";
 import MedicalHistory from "./pages/MedicalHistory";
 import BookingConfirm from "./pages/BookingConfirm";
 import { ChatProvider, ProtectedRoute } from "../context/ChatProvider";
+import AppointmentDetails from "./pages/AppointmentDetails";
 
 function App() {
   return (
@@ -37,6 +38,10 @@ function App() {
             <Route path="/search-doctor" element={<SearchDoctor />} />
             <Route path="/medical-history" element={<MedicalHistory />} />
             <Route path="/booking-confirm" element={<BookingConfirm />} />
+            <Route
+              path="/appointment-details/:id"
+              element={<AppointmentDetails />}
+            />
           </Route>
         </Routes>
         <Footer />
